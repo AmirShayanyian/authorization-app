@@ -20,6 +20,13 @@ class AuthController {
         },
       });
     } catch (error) {
+      if (error.code === 11000) {
+        return res.send({
+          status: 400,
+          type: 'Bad Request',
+          message: 'duplicate username! try changing it ',
+        });
+      }
       next(error);
     }
   }
