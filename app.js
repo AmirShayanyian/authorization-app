@@ -6,7 +6,7 @@ const dbConnection = require('./utils/db');
 require('dotenv').config();
 
 const app = express();
-dbConnection(process.env.DB_URL)
+dbConnection(process.env.DB_URL);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(allRoutes);
