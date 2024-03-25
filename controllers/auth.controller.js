@@ -1,18 +1,17 @@
 const userModel = require('../models/user.model');
-const { hashPass, verifyPass } = require('../utils/auth.util');
+const { hashPass, verifyPass, signToken } = require('../utils/auth.util');
 class AuthController {
   async signUp(req, res, next) {
     try {
       const { username, firstName, lastName, email, Address, password } =
         req.body;
-      const hashedPass = hashPass(password);
       const user = await userModel.create({
         username,
         firstName,
         lastName,
         email,
         Address,
-        password: hashedPass,
+        password: hashPass(password),
       });
       res.send({
         status: 200,
@@ -38,16 +37,24 @@ class AuthController {
       const { username, password } = req.body;
 
       const user = await userModel.findOne({ username });
-      console.log(user);
 
       const verify = verifyPass(password, user.password);
       if (verify) {
+        const token = signToken({ id: user._id, username: user.username });
         return res.send({
           status: 200,
           type: 'OK',
-          data: `Some token for ${user.username}`,
+          data: {
+            message: 'Logged in successfully',
+            token,
+          },
         });
       }
+      return res.send({
+        status: 404,
+        type: 'Not Found',
+        message: 'username or password is incorrect',
+      });
     } catch (error) {
       next(error);
     }

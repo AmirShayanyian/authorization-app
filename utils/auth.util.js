@@ -1,4 +1,6 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const secret = '55515185cf6806d7d9296d6597c1e72ade0f24c3';
 
 function hashPass(password) {
   const salt = bcrypt.genSaltSync(12);
@@ -8,11 +10,22 @@ function hashPass(password) {
 
 function verifyPass(password, hashedPassword) {
   const verified = bcrypt.compareSync(password, hashedPassword);
-  if (verified) return true;
-  throw new Error('Password is incorrect');
+  return verified;
+}
+
+function signToken(payload) {
+  return jwt.sign(payload, secret, {
+    expiresIn: 1000 * 60 * 15,
+  });
+}
+
+function verifyToken(token, secret) {
+  return jwt.verify(token, secret);
 }
 
 module.exports = {
   hashPass,
   verifyPass,
+  signToken,
+  verifyToken,
 };
