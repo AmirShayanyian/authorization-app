@@ -19,7 +19,7 @@ function signToken(payload) {
   });
 }
 
-function verifyToken(token, secret) {
+function verifyToken(token) {
   return jwt.verify(token, secret);
 }
 
